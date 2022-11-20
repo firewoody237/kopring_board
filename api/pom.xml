@@ -49,6 +49,17 @@
             <version>1.0.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.example.kopring_board.integrated</groupId>
+            <artifactId>db</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
 
     </dependencies>
 
