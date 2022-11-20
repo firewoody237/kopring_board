@@ -19,7 +19,9 @@
 
     <modules>
         <module>api</module>
+        <module>batch</module>
         <module>integrated</module>
+        <module>admin</module>
     </modules>
 
     <name>kopring_board</name>
