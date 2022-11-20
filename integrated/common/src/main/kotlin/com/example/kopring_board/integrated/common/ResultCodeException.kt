@@ -1,4 +1,4 @@
-package com.example.koping_board.integrated.common
+package com.example.kopring_board.integrated.common
 
 import org.apache.commons.lang.StringUtils
 import org.apache.logging.log4j.Level

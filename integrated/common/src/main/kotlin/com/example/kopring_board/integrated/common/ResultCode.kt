@@ -1,4 +1,4 @@
-package com.example.koping_board.integrated.common
+package com.example.kopring_board.integrated.common
 
 enum class ResultCode(val code: Int, val msg: String) {
 

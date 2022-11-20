@@ -2,19 +2,23 @@ package com.example.kopring_board.api.controller.userController
 
 
 import com.example.kopring_board.integrated.db.service.UserService
-import org.springframework.web.bind.annotation.GetMapping
+import com.example.kopring_board.integrated.webservice.api.ApiRequestMapping
+import org.apache.logging.log4j.LogManager
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/user/v1")
 class UserController(
-private val userService: UserService
+    private val userService: UserService
 ) {
+    companion object {
+        private val log = LogManager.getLogger()
+    }
 
-
-    @GetMapping("/users")
+    @ApiRequestMapping("/users")
     fun getUsers(): Any? {
+        log.debug("getUsers")
         return userService.getUsers()
     }
 }
