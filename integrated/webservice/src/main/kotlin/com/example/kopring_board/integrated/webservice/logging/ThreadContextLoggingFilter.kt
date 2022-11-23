@@ -21,5 +21,6 @@ class ThreadContextLoggingFilter : Filter {
             ThreadContext.put("requestUrl", arrayOf(request.requestURI, request.queryString).filter(StringUtils::isNotBlank).joinToString("?"))
         }
         chain.doFilter(request, response)
+        //TODO: ASK 재귀인가?
     }
 }

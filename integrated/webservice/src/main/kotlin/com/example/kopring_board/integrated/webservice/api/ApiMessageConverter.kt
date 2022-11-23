@@ -1,6 +1,6 @@
 package com.example.kopring_board.integrated.webservice.api
 
-import com.naver.billing.polaris.common.ResultCode
+import com.example.kopring_board.integrated.common.ResultCode
 import org.springframework.http.HttpInputMessage
 import org.springframework.http.HttpOutputMessage
 import org.springframework.http.HttpStatus

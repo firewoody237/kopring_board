@@ -18,7 +18,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.naver.billing.polaris</groupId>
+			<groupId>com.example.kopring_board.integrated</groupId>
 			<artifactId>common</artifactId>
 			<version>1.0.0</version>
 		</dependency>

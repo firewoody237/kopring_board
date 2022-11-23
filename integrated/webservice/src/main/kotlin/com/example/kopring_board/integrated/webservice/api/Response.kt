@@ -1,7 +1,7 @@
 package com.example.kopring_board.integrated.webservice.api
 
+import com.example.kopring_board.integrated.common.ResultCode
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.naver.billing.polaris.common.ResultCode
 import org.apache.commons.lang.StringUtils
 import org.apache.logging.log4j.ThreadContext
 
