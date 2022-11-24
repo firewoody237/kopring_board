@@ -10,6 +10,10 @@ enum class ResultCode(val code: Int, val msg: String) {
     ERROR_NOT_SUPPORTED_HTTP_METHOD(1101, "제공되지 않는 Http Method 입니다"),
     ERROR_PARAMETER_NOT_EXISTS(1102, "유효하지 않은 파라미터 입니다."),
     ERROR_PARAMETER_TYPE(1103, "유효하지 않는 파라미터 타입 입니다."),
+    ERROR_PARAMETER_JSON_PARSING(1104, "요청 json 파싱 오류 입니다."),
+    ERROR_HTTP_BODY(1105, "읽을 수 없는 http body 형식입니다."),
+    ERROR_NOT_MEDIA_TYPE(1106, "적용 불가능한 Content-Type 입니다."),
+    ERROR_ACCESS_DENIED(1107, "해당 API에 대한 권한이 없습니다."),
 
     //2000 : 유저관련
     ERROR_USER_NOT_EXISTS(2000, "존재하지 않는 유저입니다."),

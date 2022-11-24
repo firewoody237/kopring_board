@@ -83,6 +83,12 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
+        <profile>
+            <id>alpha</id>
+            <properties>
+                <env>alpha</env>
+            </properties>
+        </profile>
     </profiles>
 
     <build>

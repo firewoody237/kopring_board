@@ -30,7 +30,7 @@ class UserService(
         if (optionalUser.isPresent) {
             return optionalUser.get()
         } else {
-            throw ResultCodeException(ResultCode.ERROR_USER_NOT_EXISTS, Level.INFO)
+            throw ResultCodeException(ResultCode.ERROR_USER_NOT_EXISTS, loglevel = Level.INFO)
         }
     }
 

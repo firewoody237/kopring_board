@@ -6,6 +6,7 @@ import com.example.kopring_board.integrated.webservice.api.ApiRequestMapping
 import org.apache.logging.log4j.LogManager
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -17,7 +18,7 @@ class UserController(
         private val log = LogManager.getLogger()
     }
 
-    @ApiRequestMapping("/users")
+    @ApiRequestMapping("/users", method = [RequestMethod.GET])
     fun getUsers(): Any? {
         log.debug("getUsers")
         return userService.getUsers()

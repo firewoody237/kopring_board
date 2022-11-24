@@ -23,7 +23,7 @@ class ApiMessageConverter(
 
     override fun getSupportedMediaTypes() = listOf(MediaType("*"))
 
-    //BillApiRequestMapping의 경우 무조건 여기서 쓴다
+    //ApiRequestMapping의 경우 무조건 여기서 쓴다
     override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
         val handlerMethod = ((RequestContextHolder.getRequestAttributes() ?: return false)
             .getAttribute(HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE, 0) ?: return false) as HandlerMethod
