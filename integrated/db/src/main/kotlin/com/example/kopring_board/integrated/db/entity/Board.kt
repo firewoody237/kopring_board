@@ -4,17 +4,16 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "board")
-class Board {
-
+class Board(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long? = null
-
+    var id: Long? = null,
     @Column
-    var title: String? = null
-
+    var title: String? = null,
     @Column
     var content: String? = null
+) {
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -1,17 +1,20 @@
 package com.example.kopring_board.integrated.db.entity
 
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity
 @Table(name = "user")
-class User {
-
+data class User(
     @Id
-    var id: String? = null
+    val id: String? = null,
     @Column
-    var name: String? = null
+    val name: String? = null,
     @Column
-    var email: String? = null
+    val email: String? = null
+) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
