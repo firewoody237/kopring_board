@@ -7,13 +7,12 @@ import javax.persistence.*
 class Board(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long? = null,
+    val id: Long? = null,
     @Column
-    var title: String? = null,
+    val title: String? = null,
     @Column
-    var content: String? = null
+    val content: String? = null
 ) {
-
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
