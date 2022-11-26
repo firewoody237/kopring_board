@@ -1,5 +1,8 @@
 package com.example.kopring_board.integrated.db.entity
 
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -11,7 +14,16 @@ class Board(
     @Column
     val title: String? = null,
     @Column
-    val content: String? = null
+    val content: String? = null,
+
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    val author: User? = null,
+
+    @CreatedDate
+    val createdAt: LocalDateTime? = null,
+    @LastModifiedDate
+    val modifiedAt: LocalDateTime? = null,
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -30,6 +42,6 @@ class Board(
     }
 
     override fun toString(): String {
-        return "Board(id=$id, title='$title', content='$content')"
+        return "Board(id=$id, title='$title', content='$content', author='$author', createdAt='$createdAt', modifiedAt='$modifiedAt')"
     }
 }

@@ -1,9 +1,10 @@
 package com.example.kopring_board.integrated.db.entity
 
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
+import com.example.kopring_board.integrated.user.Grade
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import java.time.LocalDateTime
+import javax.persistence.*
 
 @Entity
 @Table(name = "user")
@@ -13,8 +14,19 @@ data class User(
     @Column
     val name: String? = null,
     @Column
-    val email: String? = null
-) {
+    val email: String? = null,
+    //TODO: Password
+
+    @Enumerated(EnumType.STRING)
+    val grade: Grade? = null,
+    @Column
+    val point: Int? = null,
+
+    @CreatedDate
+    val createdAt: LocalDateTime? = null,
+    @LastModifiedDate
+    val modifiedAt: LocalDateTime? = null,
+    ) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -32,6 +44,6 @@ data class User(
     }
 
     override fun toString(): String {
-        return "User(id=$id, name='$name', email='$email')"
+        return "User(id=$id, name='$name', email='$email', grade='$grade', point='$point', createdAt='$createdAt', modifiedAt='$modifiedAt')"
     }
 }
