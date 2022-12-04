@@ -1,20 +1,30 @@
 package com.example.kopring_board.integrated.db.entity
 
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
 @Table(name = "board")
-class Board {
-
+class Board(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long? = null
+    val id: Long? = null,
+    @Column(nullable = false, length = 100)
+    val title: String? = null,
+    @Column(nullable = false)
+    val content: String? = null,
 
-    @Column
-    var title: String? = null
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    val author: User? = null,
 
-    @Column
-    var content: String? = null
+    @CreatedDate
+    val createdAt: LocalDateTime? = null,
+    @LastModifiedDate
+    val modifiedAt: LocalDateTime? = null,
+) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -32,6 +42,6 @@ class Board {
     }
 
     override fun toString(): String {
-        return "Board(id=$id, title='$title', content='$content')"
+        return "Board(id=$id, title='$title', content='$content', author='$author', createdAt='$createdAt', modifiedAt='$modifiedAt')"
     }
 }

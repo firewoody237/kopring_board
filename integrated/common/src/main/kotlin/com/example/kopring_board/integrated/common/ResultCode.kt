@@ -17,9 +17,10 @@ enum class ResultCode(val code: Int, val msg: String) {
 
     //2000 : 유저관련
     ERROR_USER_NOT_EXISTS(2000, "존재하지 않는 유저입니다."),
+    ERROR_USER_ALREADY_EXISTS(2001, "이미 존재하는 ID 입니다."),
 
-
-
+    //3000 : 게시글관련
+    ERROR_BOARD_NOT_EXIST(3000, "존재하지 않는 게시글입니다."),
 
     //9000 : 확인이 힘든 오류
     ERROR_DB(9002, "DB 변경 중 오류"),
