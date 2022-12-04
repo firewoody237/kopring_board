@@ -11,9 +11,9 @@ class Board(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long? = null,
-    @Column
+    @Column(nullable = false, length = 100)
     val title: String? = null,
-    @Column
+    @Column(nullable = false)
     val content: String? = null,
 
     @ManyToOne

@@ -1,6 +1,7 @@
 package com.example.kopring_board.integrated.db.entity
 
 import com.example.kopring_board.integrated.user.Grade
+import org.jetbrains.annotations.NotNull
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import java.time.LocalDateTime
@@ -11,16 +12,15 @@ import javax.persistence.*
 data class User(
     @Id
     val id: String? = null,
-    @Column
+    @Column(nullable = false, length = 15)
     val name: String? = null,
-    @Column
+    @Column(nullable = false)
     val email: String? = null,
-    //TODO: Password
 
-    @Enumerated(EnumType.STRING)
-    val grade: Grade? = null,
-    @Column
-    val point: Int? = null,
+//    TODO: Password
+//    @Column
+//    @Convert(converter = PasswordConverter.class)
+//    val val password: String?,
 
     @CreatedDate
     val createdAt: LocalDateTime? = null,
@@ -44,6 +44,6 @@ data class User(
     }
 
     override fun toString(): String {
-        return "User(id=$id, name='$name', email='$email', grade='$grade', point='$point', createdAt='$createdAt', modifiedAt='$modifiedAt')"
+        return "User(id=$id, name='$name', email='$email', createdAt='$createdAt', modifiedAt='$modifiedAt')"
     }
 }
