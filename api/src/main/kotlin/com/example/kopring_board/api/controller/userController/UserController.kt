@@ -1,9 +1,12 @@
 package com.example.kopring_board.api.controller.userController
 
 
+import com.example.kopring_board.integrated.common.ResultCode
+import com.example.kopring_board.integrated.common.ResultCodeException
 import com.example.kopring_board.integrated.db.entity.User
 import com.example.kopring_board.integrated.db.service.UserService
 import com.example.kopring_board.integrated.webservice.api.ApiRequestMapping
+import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody

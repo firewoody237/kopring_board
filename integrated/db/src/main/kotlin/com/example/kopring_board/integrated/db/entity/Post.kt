@@ -6,8 +6,8 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
-@Table(name = "board")
-class Board(
+@Table(name = "post")
+class Post(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long? = null,
@@ -24,13 +24,20 @@ class Board(
     val createdAt: LocalDateTime? = null,
     @LastModifiedDate
     val modifiedAt: LocalDateTime? = null,
+    @LastModifiedDate
+    val deletedAt: LocalDateTime? = null,
+
+    //heart : Long
+
+    //commetCount : Long
+
 ) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Board
+        other as Post
 
         if (id != other.id) return false
 
@@ -42,6 +49,6 @@ class Board(
     }
 
     override fun toString(): String {
-        return "Board(id=$id, title='$title', content='$content', author='$author', createdAt='$createdAt', modifiedAt='$modifiedAt')"
+        return "Post(id=$id, title='$title', content='$content', author='$author', createdAt='$createdAt', modifiedAt='$modifiedAt')"
     }
 }

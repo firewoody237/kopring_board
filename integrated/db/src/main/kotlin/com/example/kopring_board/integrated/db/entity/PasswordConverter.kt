@@ -7,11 +7,15 @@ class PasswordConverter : AttributeConverter<String, String> {
         return encoded(raw)
     }
 
-    private fun encoded(raw: String?): String? {
-        return ""
+    private fun encoded(raw: String?): String {
+        return raw ?: ""
     }
 
     override fun convertToEntityAttribute(encoded: String?): String? {
-        return encoded
+        return decode(encoded)
+    }
+
+    private fun decode(encoded: String?) : String?{
+        return ""
     }
 }

@@ -8,6 +8,7 @@ import com.example.kopring_board.integrated.db.repository.UserRepository
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.springframework.stereotype.Service
+import java.util.Objects
 
 @Service
 class UserService(
@@ -35,12 +36,19 @@ class UserService(
     }
 
     fun createUser(user: User): User? {
-        log.debug("createUser")
+        log.debug("createUser. user : $user")
+
+        //user parameter check
 
         if (userRepository.existsById(user.id!!)) {
             throw ResultCodeException(ResultCode.ERROR_USER_ALREADY_EXISTS, loglevel = Level.INFO)
         } else {
-            return userRepository.save(user)
+            try {
+                return userRepository.save(user)
+            }catch (e:Exception){
+                log.error("create user. $user", e)
+                throw ResultCodeException(ResultCode.ERROR_USER_ALREADY_EXISTS , loglevel = Level.ERROR)
+            }
         }
     }
 

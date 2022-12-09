@@ -1,6 +1,7 @@
 package com.example.kopring_board.integrated.db.entity
 
 import com.example.kopring_board.integrated.user.Grade
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.jetbrains.annotations.NotNull
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -11,22 +12,22 @@ import javax.persistence.*
 @Table(name = "user")
 data class User(
     @Id
-    val id: String? = null,
+    val id: String = "",
     @Column(nullable = false, length = 15)
     val name: String? = null,
     @Column(nullable = false)
     val email: String? = null,
-
-//    TODO: Password
-//    @Column
-//    @Convert(converter = PasswordConverter.class)
-//    val val password: String?,
 
     @CreatedDate
     val createdAt: LocalDateTime? = null,
     @LastModifiedDate
     val modifiedAt: LocalDateTime? = null,
     ) {
+
+    @JsonIgnore
+    @Column
+    @Convert(converter = PasswordConverter::class)
+    var password: String? =null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
