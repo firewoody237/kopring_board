@@ -3,6 +3,7 @@ package com.example.kopring_board.api.controller.userController
 
 import com.example.kopring_board.integrated.common.ResultCode
 import com.example.kopring_board.integrated.common.ResultCodeException
+import com.example.kopring_board.integrated.db.dto.user.DeleteUserDTO
 import com.example.kopring_board.integrated.db.entity.User
 import com.example.kopring_board.integrated.db.service.UserService
 import com.example.kopring_board.integrated.webservice.api.ApiRequestMapping
@@ -37,19 +38,20 @@ class UserController(
 
     @ApiRequestMapping("/users", method = [RequestMethod.POST])
     fun createUser(@RequestBody user: User): User? {
-        log.debug("createUser")
+        log.debug("createUser, user='$user'")
         return userService.createUser(user)
     }
 
-    @ApiRequestMapping("/users/{id}", method = [RequestMethod.POST])
-    fun updateUser(@PathVariable id: String, @RequestBody user: User): Boolean? {
-        log.debug("updateUser")
-        return userService.updateUser(id, user)
+    //PATCH로 상황에 따라 특정 컬럼만 받을 순 없나?
+    @ApiRequestMapping("/users", method = [RequestMethod.PUT])
+    fun updateUser(@RequestBody user: User): Boolean? {
+        log.debug("updateUser, user='$user'")
+        return userService.updateUser(user)
     }
 
-    @ApiRequestMapping("/users/{id}", method = [RequestMethod.DELETE])
-    fun deleteUser(@PathVariable id: String): Boolean? {
-        log.debug("deleteUser")
-        return userService.deleteUser(id)
+    @ApiRequestMapping("/users", method = [RequestMethod.DELETE])
+    fun deleteUser(@RequestBody deleteUserDTO: DeleteUserDTO): Boolean? {
+        log.debug("deleteUser, deleteUserDTO='$deleteUserDTO'")
+        return userService.deleteUser(deleteUserDTO)
     }
 }

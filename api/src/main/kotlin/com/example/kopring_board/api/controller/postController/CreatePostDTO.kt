@@ -1,4 +1,4 @@
-package com.example.kopring_board.api.controller.boardController
+package com.example.kopring_board.api.controller.postController
 
 data class CreatePostDTO(
     val authorId : String?,

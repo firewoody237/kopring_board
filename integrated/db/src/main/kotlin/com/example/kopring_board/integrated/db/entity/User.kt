@@ -1,14 +1,16 @@
 package com.example.kopring_board.integrated.db.entity
 
-import com.example.kopring_board.integrated.user.Grade
+import com.example.kopring_board.integrated.common.BaseTime
+import com.example.kopring_board.integrated.common.PasswordConverter
 import com.fasterxml.jackson.annotation.JsonIgnore
-import org.jetbrains.annotations.NotNull
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
+@EntityListeners(value = [AuditingEntityListener::class])
 @Table(name = "user")
 data class User(
     @Id
@@ -17,17 +19,12 @@ data class User(
     val name: String? = null,
     @Column(nullable = false)
     val email: String? = null,
+    ): BaseTime() {
 
-    @CreatedDate
-    val createdAt: LocalDateTime? = null,
-    @LastModifiedDate
-    val modifiedAt: LocalDateTime? = null,
-    ) {
-
-    @JsonIgnore
+//    @JsonIgnore
     @Column
     @Convert(converter = PasswordConverter::class)
-    var password: String? =null
+    val password: String? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -41,7 +38,7 @@ data class User(
     }
 
     override fun hashCode(): Int {
-        return id?.hashCode() ?: 0
+        return id.hashCode()
     }
 
     override fun toString(): String {

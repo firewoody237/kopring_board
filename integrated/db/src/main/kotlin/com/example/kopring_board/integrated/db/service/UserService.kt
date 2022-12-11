@@ -2,6 +2,7 @@ package com.example.kopring_board.integrated.db.service
 
 import com.example.kopring_board.integrated.common.ResultCode
 import com.example.kopring_board.integrated.common.ResultCodeException
+import com.example.kopring_board.integrated.db.dto.user.DeleteUserDTO
 import com.example.kopring_board.integrated.db.entity.User
 import com.example.kopring_board.integrated.db.mapper.UserMapper
 import com.example.kopring_board.integrated.db.repository.UserRepository
@@ -25,7 +26,7 @@ class UserService(
     }
 
     fun getUser(id: String): User? {
-        log.debug("getUser")
+        log.debug("getUser, id='$id'")
 
         var optionalUser = userRepository.findById(id)
         if (optionalUser.isPresent) {
@@ -36,26 +37,24 @@ class UserService(
     }
 
     fun createUser(user: User): User? {
-        log.debug("createUser. user : $user")
+        log.debug("createUser. user=$user")
 
-        //user parameter check
-
-        if (userRepository.existsById(user.id!!)) {
+        if (userRepository.existsById(user.id)) {
             throw ResultCodeException(ResultCode.ERROR_USER_ALREADY_EXISTS, loglevel = Level.INFO)
         } else {
             try {
                 return userRepository.save(user)
             }catch (e:Exception){
-                log.error("create user. $user", e)
-                throw ResultCodeException(ResultCode.ERROR_USER_ALREADY_EXISTS , loglevel = Level.ERROR)
+                log.error("create user failed. $user", e)
+                throw ResultCodeException(ResultCode.ERROR_DB , loglevel = Level.ERROR)
             }
         }
     }
 
-    fun updateUser(id: String, user: User): Boolean? {
-        log.debug("updateUser")
+    fun updateUser(user: User): Boolean? {
+        log.debug("updateUser, user='$user'")
 
-        if (userRepository.existsById(id)) {
+        if (userRepository.existsById(user.id)) {
             userRepository.save(user)
             return true
         } else {
@@ -63,11 +62,11 @@ class UserService(
         }
     }
 
-    fun deleteUser(id: String): Boolean? {
-        log.debug("deleteUSer")
+    fun deleteUser(deleteUserDTO: DeleteUserDTO): Boolean? {
+        log.debug("deleteUser, deleteUserDTO='$deleteUserDTO'")
 
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id)
+        if (userRepository.existsById(deleteUserDTO.id!!)) {
+            userRepository.deleteById(deleteUserDTO.id!!)
             return true
         } else {
             throw ResultCodeException(ResultCode.ERROR_USER_NOT_EXISTS, loglevel = Level.INFO)

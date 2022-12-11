@@ -21,6 +21,8 @@ enum class ResultCode(val code: Int, val msg: String) {
 
     //3000 : 게시글관련
     ERROR_POST_NOT_EXIST(3000, "존재하지 않는 게시글입니다."),
+    ERROR_POST_TITLE_WITH_USER_ALREADY_EXISTS(3001, "이미 같은 제목으로된 게시글이 존재합니다."),
+    ERROR_REQUESTER_NOT_POST_AUTHOR(3002, "게시글의 저자가 아닙니다."),
 
     //9000 : 확인이 힘든 오류
     ERROR_DB(9002, "DB 변경 중 오류"),
