@@ -12,6 +12,6 @@ import java.util.*
 @Repository
 interface PostRepository : JpaRepository<Post, Long?> {
 
-    fun findByAuthorAndCategory(author: User?, category: Category?): List<Post>
-    abstract fun findByAuthorAndTitle(author: User?, title: String?): Optional<Post>
+    fun findByAuthorAndCategoryAndDeletedAtIsNotNull(author: User?, category: Category?): List<Post>
+    fun findByAuthorAndContent(author: User, content: String): Optional<Post>
 }

@@ -16,9 +16,9 @@ data class User(
     @Id
     val id: String = "",
     @Column(nullable = false, length = 15)
-    val name: String? = null,
+    var name: String? = null,
     @Column(nullable = false)
-    val email: String? = null,
+    var email: String? = null,
     ): BaseTime() {
 
 //    @JsonIgnore

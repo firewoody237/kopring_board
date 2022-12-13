@@ -11,12 +11,12 @@ import javax.persistence.*
 @Table(name = "post")
 class Post(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Long? = null,
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    val id: Long = 0L,
     @Column(nullable = false, length = 100)
-    val title: String? = null,
-    @Column(nullable = false)
-    val content: String? = null,
+    var title: String = "",
+    @Column(nullable = false, length = 10000)
+    var content: String = "",
     @Column
     @Enumerated(EnumType.STRING)
     val category: Category? = null,
@@ -31,7 +31,7 @@ class Post(
     val author: User? = null,
 
     @Column
-    val deletedAt: LocalDateTime? = null,
+    var deletedAt: LocalDateTime? = null,
 ): BaseTime() {
 
     override fun equals(other: Any?): Boolean {

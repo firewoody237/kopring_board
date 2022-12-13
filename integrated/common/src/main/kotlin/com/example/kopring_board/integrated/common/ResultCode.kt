@@ -23,9 +23,16 @@ enum class ResultCode(val code: Int, val msg: String) {
     ERROR_POST_NOT_EXIST(3000, "존재하지 않는 게시글입니다."),
     ERROR_POST_TITLE_WITH_USER_ALREADY_EXISTS(3001, "이미 같은 제목으로된 게시글이 존재합니다."),
     ERROR_REQUESTER_NOT_POST_AUTHOR(3002, "게시글의 저자가 아닙니다."),
+    ERROR_POST_ALREADY_EXISTS(3003, "이미 존재하는 게시글 입니다."),
+
+    //4000 : 댓글 관련
+    ERROR_COMMENT_AUTHOR_NOT_MATCHED_WITH_USER(4001, "댓글 작성자가 아닙니다."),
+    ERROR_COMMENT_NOT_MATCHED_WITH_POST(4002, "댓글과 게시글이 매칭되지 않습니다."),
+    ERROR_COMMENT_NOT_EXIST(4003, "존재하지 않는 댓글입니다."),
+    ERROR_COMMENT_ALREADY_EXIST(4004, "이미 존재하는 댓글입니다."),
 
     //9000 : 확인이 힘든 오류
     ERROR_DB(9002, "DB 변경 중 오류"),
     ERROR_CIPHER(9003, "암호화 모듈 오류"),
-    ERROR_ETC(9999, "기타 에러");
+    ERROR_ETC(9999, "기타 에러"),
 }

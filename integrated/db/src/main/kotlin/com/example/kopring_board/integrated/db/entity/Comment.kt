@@ -11,9 +11,9 @@ import javax.persistence.*
 data class Comment(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Long? = null,
+    val id: Long = 0L,
     @Column(nullable = false, length = 200)
-    val content: String? = null,
+    var content: String = "",
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -21,10 +21,10 @@ data class Comment(
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    val user: User? = null,
+    val author: User? = null,
 
     @Column
-    val deletedAt: LocalDateTime? = null,
+    var deletedAt: LocalDateTime? = null,
 ): BaseTime() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -42,6 +42,6 @@ data class Comment(
     }
 
     override fun toString(): String {
-        return "Comment(id='$id', content='$content', post='$post', user='$user', deletedAt='$deletedAt'"
+        return "Comment(id='$id', content='$content', post='$post', author='$author', deletedAt='$deletedAt'"
     }
 }
