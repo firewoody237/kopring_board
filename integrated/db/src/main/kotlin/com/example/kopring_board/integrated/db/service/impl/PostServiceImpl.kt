@@ -12,6 +12,7 @@ import com.example.kopring_board.integrated.db.service.PostService
 import com.example.kopring_board.integrated.post.Category
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -33,11 +34,11 @@ class PostServiceImpl(
      * Category + AuthorId/Title/Content
      * 2가지 조합으로 사용
      */
-    override fun getPosts(getPostDTO: GetPostDTO): List<Post> {
+    override fun getPosts(getPostDTO: GetPostDTO, pageRequest: PageRequest): List<Post> {
         log.debug("getPosts, getPostDTO = '$getPostDTO'")
 
         if (getPostDTO.authorId.isNullOrEmpty() && getPostDTO.title.isNullOrEmpty() && getPostDTO.content.isNullOrEmpty()) {
-            return postRepository.findByCategoryAndDeletedAtIsNotNull(Category.valueOf(getPostDTO.category))
+            return postRepository.findByCategoryAndDeletedAtIsNotNull(Category.valueOf(getPostDTO.category), pageRequest)
         }
 
         //한번에 모든 Post를 조회할 일이 거의 없음
@@ -48,21 +49,24 @@ class PostServiceImpl(
                     User(
                         id = getPostDTO.authorId!!
                     ),
-                    Category.valueOf(getPostDTO.category)
+                    Category.valueOf(getPostDTO.category),
+                    pageRequest
                 )
             }
 
             getPostDTO.authorId.isNullOrEmpty() && getPostDTO.content.isNullOrEmpty() -> {
-                postRepository.findByTitleLikeAAndCategoryAndDeletedAtIsNotNull(
+                postRepository.findByTitleLikeAndCategoryAndDeletedAtIsNotNull(
                     getPostDTO.title!!,
-                    Category.valueOf(getPostDTO.category)
+                    Category.valueOf(getPostDTO.category),
+                    pageRequest
                 )
             }
 
             getPostDTO.authorId.isNullOrEmpty() && getPostDTO.title.isNullOrEmpty() -> {
-                postRepository.findByContentLikeAAndCategoryAndDeletedAtIsNotNull(
+                postRepository.findByContentLikeAndCategoryAndDeletedAtIsNotNull(
                     getPostDTO.content!!,
-                    Category.valueOf(getPostDTO.category)
+                    Category.valueOf(getPostDTO.category),
+                    pageRequest
                 )
             }
 
@@ -234,7 +238,7 @@ class PostServiceImpl(
 
         if (!updatePostDTO.category.isNullOrEmpty()) {
             val category = Category.valueOf(updatePostDTO.category!!)
-            //post.category = category
+            post.category = category
             isChange = true
         }
 

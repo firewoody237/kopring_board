@@ -6,12 +6,15 @@ data class CreateUserDTO(
     val id: String,
     var name: String?,
     var email: String?,
+    var password: String?,
 ) {
     fun toEntity(): User {
-        return User(
+        var aUser = User(
             id = this.id,
             name = this.name,
             email = this.email,
         )
+        aUser.password = this.password
+        return aUser
     }
 }

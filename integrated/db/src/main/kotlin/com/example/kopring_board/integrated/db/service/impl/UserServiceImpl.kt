@@ -89,6 +89,7 @@ class UserServiceImpl(
             throw ResultCodeException(ResultCode.ERROR_USER_ALREADY_EXISTS, loglevel = Level.INFO)
         } else {
             try {
+                log.debug("createUserDTO to User : ${createUserDTO.toEntity()}")
                 return userRepository.save(createUserDTO.toEntity())
             } catch (e:Exception) {
                 log.error("create user failed. ${createUserDTO.id}", e)

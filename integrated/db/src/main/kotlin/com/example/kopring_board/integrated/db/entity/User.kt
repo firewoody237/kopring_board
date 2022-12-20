@@ -25,12 +25,12 @@ data class User(
     var grade: Grade = Grade.GREEN,
     @Column
     var point: Long = 0,
-): BaseTime() {
+): BaseTime(), java.io.Serializable {
 
 //    @JsonIgnore
     @Column
     @Convert(converter = PasswordConverter::class)
-    val password: String? = null
+var password: String? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

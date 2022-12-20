@@ -1,6 +1,7 @@
 package com.example.kopring_board.api.controller.postController
 
 import com.example.kopring_board.integrated.db.dto.comment.CreateCommentDTO
+import com.example.kopring_board.integrated.db.dto.comment.DeleteCommentDTO
 import com.example.kopring_board.integrated.db.dto.comment.GetCommentDTO
 import com.example.kopring_board.integrated.db.dto.comment.UpdateCommentDTO
 import com.example.kopring_board.integrated.db.dto.heart.ToggleHeartDTO
@@ -14,6 +15,7 @@ import com.example.kopring_board.integrated.db.service.HeartService
 import com.example.kopring_board.integrated.db.service.PostService
 import com.example.kopring_board.integrated.webservice.api.ApiRequestMapping
 import org.apache.logging.log4j.LogManager
+import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -28,14 +30,16 @@ class PostController(
     }
 
     @ApiRequestMapping("/posts", method = [RequestMethod.GET])
-    fun getPosts(@RequestBody getPostDTO: GetPostDTO): List<Post> {
+    fun getPosts(@RequestBody getPostDTO: GetPostDTO, @RequestParam page: Int, @RequestParam size: Int): List<Post> {
         log.debug("getPosts, getPostDTO = '$getPostDTO'")
-        return postService.getPosts(getPostDTO)
+        val pageRequest = PageRequest.of(page, size)
+        return postService.getPosts(getPostDTO, pageRequest)
     }
 
     @ApiRequestMapping("/posts/{id}", method = [RequestMethod.GET])
     fun getPosts(@PathVariable id: Long): Post {
         log.debug("getPost, id = '$id'")
+
         return postService.getPost(id)
     }
 
@@ -84,9 +88,15 @@ class PostController(
     }
 
     @ApiRequestMapping("/posts/{id}/comments", method = [RequestMethod.PUT])
-    fun toggleComment(@PathVariable id: Long, @RequestBody updateCommentDTO: UpdateCommentDTO): Boolean {
+    fun updateComment(@PathVariable id: Long, @RequestBody updateCommentDTO: UpdateCommentDTO): Boolean {
         log.debug("toggleComment, id='${id}', updateCommentDTO='${updateCommentDTO}'")
-        return commentService.toggleComment(id, updateCommentDTO)
+        return commentService.updateComment(id, updateCommentDTO)
+    }
+
+    @ApiRequestMapping("/posts/{id}/comments", method = [RequestMethod.DELETE])
+    fun deleteComment(@PathVariable id: Long, @RequestBody deleteCommentDTO: DeleteCommentDTO): Boolean {
+        log.debug("toggleComment, id='${id}', deleteCommentDTO='${deleteCommentDTO}'")
+        return commentService.deleteComment(id, deleteCommentDTO)
     }
 
 

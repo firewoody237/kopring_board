@@ -13,9 +13,9 @@ import javax.persistence.MappedSuperclass
 abstract class BaseTime {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    val createdAt: LocalDateTime? = null
+    val createdAt: LocalDateTime = LocalDateTime.now()
 
     @UpdateTimestamp
-    @Column(nullable = false)
-    val modifiedAt: LocalDateTime? = null
+    @Column(nullable = true)
+    val modifiedAt: LocalDateTime = LocalDateTime.now()
 }

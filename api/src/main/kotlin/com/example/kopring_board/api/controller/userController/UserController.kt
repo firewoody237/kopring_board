@@ -39,6 +39,7 @@ class UserController(
         return userService.createUser(createUserDTO)
     }
 
+    //TODO: Password 변경 추가
     @ApiRequestMapping("/users", method = [RequestMethod.PUT])
     fun updateUser(@RequestBody updateUserDTO: UpdateUserDTO): Boolean {
         log.debug("updateUser, user='$updateUserDTO'")
