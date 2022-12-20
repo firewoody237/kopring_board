@@ -1,56 +1,61 @@
 package com.example.kopring_board.api.controller.userController
 
 
-import com.example.kopring_board.integrated.common.ResultCode
-import com.example.kopring_board.integrated.common.ResultCodeException
+import com.example.kopring_board.integrated.db.dto.user.*
+import com.example.kopring_board.integrated.db.entity.Heart
+import com.example.kopring_board.integrated.db.entity.Post
 import com.example.kopring_board.integrated.db.entity.User
+import com.example.kopring_board.integrated.db.service.HeartService
 import com.example.kopring_board.integrated.db.service.UserService
 import com.example.kopring_board.integrated.webservice.api.ApiRequestMapping
-import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user/v1")
 class UserController(
-    private val userService: UserService
+    private val userService: UserService,
+    private val heartService: HeartService
 ) {
     companion object {
         private val log = LogManager.getLogger()
     }
 
     @ApiRequestMapping("/users", method = [RequestMethod.GET])
-    fun getUsers(): List<User> {
-        log.debug("getUsers")
-        return userService.getUsers()
+    fun getUsers(@RequestBody getUserDTO: GetUserDTO): List<User> {
+        log.debug("getUsers By Parameter")
+        return userService.getUsers(getUserDTO)
     }
 
     @ApiRequestMapping("/users/{id}", method = [RequestMethod.GET])
-    fun getUser(@PathVariable id: String): User? {
+    fun getUser(@PathVariable id: String): User {
         log.debug("getUsers")
         return userService.getUser(id)
     }
 
     @ApiRequestMapping("/users", method = [RequestMethod.POST])
-    fun createUser(@RequestBody user: User): User? {
-        log.debug("createUser, user='$user'")
-        return userService.createUser(user)
+    fun createUser(@RequestBody createUserDTO: CreateUserDTO): User {
+        log.debug("createUser, user='$createUserDTO'")
+        return userService.createUser(createUserDTO)
     }
 
-    //PATCH로 상황에 따라 특정 컬럼만 받을 순 없나?
     @ApiRequestMapping("/users", method = [RequestMethod.PUT])
-    fun updateUser(@RequestBody user: User): User? {
-        log.debug("updateUser, user='$user'")
-        return userService.updateUser(user)
+    fun updateUser(@RequestBody updateUserDTO: UpdateUserDTO): Boolean {
+        log.debug("updateUser, user='$updateUserDTO'")
+        return userService.updateUser(updateUserDTO)
     }
 
     @ApiRequestMapping("/users", method = [RequestMethod.DELETE])
-    fun deleteUser(@RequestBody user: User): Boolean? {
-        log.debug("deleteUser, user='$user'")
-        return userService.deleteUser(user)
+    fun deleteUser(@RequestBody deleteUserDTO: DeleteUserDTO): Boolean {
+
+        log.debug("deleteUser, user='$deleteUserDTO'")
+        return userService.deleteUser(deleteUserDTO)
+    }
+
+    //TODO: 이 구조가 맞나?
+    @ApiRequestMapping("/users/{id}/heart", method = [RequestMethod.GET])
+    fun getHeartPosts(@PathVariable id: String): List<Heart> {
+        log.debug("getUserHeart, userId='$id'")
+        return heartService.getHeartPosts(id)
     }
 }

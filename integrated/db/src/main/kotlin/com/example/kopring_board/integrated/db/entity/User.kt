@@ -2,6 +2,7 @@ package com.example.kopring_board.integrated.db.entity
 
 import com.example.kopring_board.integrated.common.BaseTime
 import com.example.kopring_board.integrated.common.PasswordConverter
+import com.example.kopring_board.integrated.user.Grade
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -16,10 +17,15 @@ data class User(
     @Id
     val id: String = "",
     @Column(nullable = false, length = 15)
-    var name: String? = null,
+    var name: String? = "",
     @Column(nullable = false)
-    var email: String? = null,
-    ): BaseTime() {
+    var email: String? = "",
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    var grade: Grade = Grade.GREEN,
+    @Column
+    var point: Long = 0,
+): BaseTime() {
 
 //    @JsonIgnore
     @Column
@@ -42,6 +48,6 @@ data class User(
     }
 
     override fun toString(): String {
-        return "User(id=$id, name='$name', email='$email', createdAt='$createdAt', modifiedAt='$modifiedAt')"
+        return "User(id=$id, name='$name', email='$email', grade='$grade', point='$point', createdAt='$createdAt', modifiedAt='$modifiedAt')"
     }
 }

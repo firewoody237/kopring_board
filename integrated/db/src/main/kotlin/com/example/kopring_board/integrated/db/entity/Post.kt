@@ -9,9 +9,9 @@ import javax.persistence.*
 @Entity
 @EntityListeners(value = [AuditingEntityListener::class])
 @Table(name = "post")
-class Post(
+data class Post(
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue
     val id: Long = 0L,
     @Column(nullable = false, length = 100)
     var title: String = "",
@@ -19,14 +19,14 @@ class Post(
     var content: String = "",
     @Column
     @Enumerated(EnumType.STRING)
-    val category: Category? = null,
+    var category: Category = Category.UNCATEGORIZED,
 
-    @Column
-    val heart: Int = 0,
-    @Column
-    val commentCount: Int = 0,
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    var heart: List<Heart>? = null,
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    val comment: List<Comment>? = null,
 
-    @ManyToOne
+    @ManyToOne //TODO: check LAZY?
     @JoinColumn(name="user_id")
     val author: User? = null,
 
@@ -46,10 +46,10 @@ class Post(
     }
 
     override fun hashCode(): Int {
-        return id?.hashCode() ?: 0
+        return id.hashCode()
     }
 
     override fun toString(): String {
-        return "Post(id=$id, title='$title', content='$content', heart='$heart', commentCount='$commentCount', category='$category', author='$author', deletedAt='$deletedAt')"
+        return "Post(id=$id, title='$title', content='$content', heart='$heart', comment='$comment', category='$category', author='$author', deletedAt='$deletedAt')"
     }
 }
