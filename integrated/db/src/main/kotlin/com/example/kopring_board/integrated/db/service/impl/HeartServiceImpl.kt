@@ -10,6 +10,8 @@ import com.example.kopring_board.integrated.db.repository.HeartRepository
 import com.example.kopring_board.integrated.db.repository.PostRepository
 import com.example.kopring_board.integrated.db.repository.UserRepository
 import com.example.kopring_board.integrated.db.service.HeartService
+import com.example.kopring_board.integrated.db.service.PostService
+import com.example.kopring_board.integrated.db.service.UserService
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.springframework.stereotype.Service
@@ -18,7 +20,9 @@ import org.springframework.stereotype.Service
 class HeartServiceImpl(
     private val userRepository: UserRepository,
     private val postRepository: PostRepository,
-    private val heartRepository: HeartRepository
+    private val heartRepository: HeartRepository,
+    private val postService: PostService,
+    private val userService: UserService
 ): HeartService {
 
     companion object {
@@ -89,12 +93,12 @@ class HeartServiceImpl(
             )
         }
 
-        if (optionalPost.get().author?.id != optionalUser.get().id) {
-            throw ResultCodeException(
-                ResultCode.ERROR_REQUESTER_NOT_POST_AUTHOR,
-                loglevel = Level.ERROR
-            )
-        }
+//        if (optionalPost.get().author?.id != optionalUser.get().id) {
+//            throw ResultCodeException(
+//                ResultCode.ERROR_REQUESTER_NOT_POST_AUTHOR,
+//                loglevel = Level.ERROR
+//            )
+//        }
 
         val optionalHeart = heartRepository.findByUserAndPost(optionalUser.get(), optionalPost.get())
         if (optionalHeart.isPresent) {
@@ -108,4 +112,50 @@ class HeartServiceImpl(
             )
         }
     }
+    /*fun like(postId: Long, toggleHeartDTO: ToggleHeartDTO) {
+        val post = postService.getPost(postId)
+
+        val user = userService.getUser(toggleHeartDTO.userId)
+
+        try{
+            heartRepository.save(
+                Heart(
+                    user = user,
+                    post = post
+                )
+            )
+        }catch (e:Exception){
+            throw ResultCodeException(
+                ResultCode.ERROR_DB,
+                loglevel = Level.ERROR
+            )
+        }
+
+
+        val optionalHeart = heartRepository.findByUserAndPost(optionalUser.get(), optionalPost.get())
+        if (optionalHeart.isPresent) {  heartRepository.deleteById(optionalHeart.get().id)
+
+        } else {
+            heartRepository.save(
+                Heart(
+                    user = optionalUser.get(),
+                    post = optionalPost.get()
+                )
+            )
+        }
+    }
+
+
+    fun dislike(heartId : String) {
+        try{
+            heartRepository.deleteById(optionalHeart.get().id)
+        }catch (e:Exception){
+            throw ResultCodeException(
+                ResultCode.ERROR_DB,
+                loglevel = Level.ERROR
+            )
+        }
+    }*/
+
+
 }

@@ -9,7 +9,9 @@ import com.example.kopring_board.integrated.db.mapper.PostMapper
 import com.example.kopring_board.integrated.db.repository.PostRepository
 import com.example.kopring_board.integrated.db.repository.UserRepository
 import com.example.kopring_board.integrated.db.service.PostService
+import com.example.kopring_board.integrated.db.service.UserService
 import com.example.kopring_board.integrated.post.Category
+import org.apache.commons.lang.StringUtils
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.springframework.data.domain.PageRequest
@@ -22,6 +24,7 @@ class PostServiceImpl(
     private val postMapper: PostMapper,
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
+    private val userService: UserService
 ): PostService {
 
     //TODO: try catch 씌우기
@@ -150,10 +153,12 @@ class PostServiceImpl(
     override fun createPost(createPostDTO: CreatePostDTO): Post {
         log.debug("createPost, createPostDTO='$createPostDTO'")
 
-        val optionalUser = userRepository.findById(createPostDTO.authorId)
-        if (optionalUser.isEmpty) {
-            throw ResultCodeException(ResultCode.ERROR_USER_NOT_EXISTS, loglevel = Level.WARN)
-        }
+        val author = userService.getUser(createPostDTO.authorId)
+//
+//        val optionalUser = userRepository.findById(createPostDTO.authorId)
+//        if (optionalUser.isEmpty) {
+//            throw ResultCodeException(ResultCode.ERROR_USER_NOT_EXISTS, loglevel = Level.WARN)
+//        }
 
         when {
             //TODO: Entity에 nullable로 안해두면 이게 필요할까?
@@ -182,7 +187,7 @@ class PostServiceImpl(
             }
         }
 
-        val author = optionalUser.get()
+//        val author = optionalUser.get()
 
         val post = Post(
             title = createPostDTO.title!!,
@@ -218,6 +223,8 @@ class PostServiceImpl(
             throw ResultCodeException(ResultCode.ERROR_POST_NOT_EXIST, loglevel = Level.WARN)
         }
 
+        //todo call user service
+
         //Author Check
         if (optionalPost.get().author?.id != optionalUser.get().id) {
             throw ResultCodeException(ResultCode.ERROR_REQUESTER_NOT_POST_AUTHOR, loglevel = Level.WARN)
@@ -226,7 +233,7 @@ class PostServiceImpl(
         var isChange = false
         val post = optionalPost.get()
 
-        if (!updatePostDTO.title.isNullOrEmpty()) {
+        if (updatePostDTO.title?.isNotEmpty() == true) {
             post.title = updatePostDTO.title!!
             isChange = true
         }
@@ -244,10 +251,10 @@ class PostServiceImpl(
 
 
         return try {
-            when {
-                isChange -> {
+            when(isChange) {
+                true -> {
                     postRepository.save(post)
-                    return true
+                    true
                 }
 
                 else -> {

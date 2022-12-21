@@ -1,5 +1,7 @@
 package com.example.kopring_board.api.controller.postController
 
+import com.example.kopring_board.integrated.common.PAGE
+import com.example.kopring_board.integrated.common.SIZE
 import com.example.kopring_board.integrated.db.dto.comment.CreateCommentDTO
 import com.example.kopring_board.integrated.db.dto.comment.DeleteCommentDTO
 import com.example.kopring_board.integrated.db.dto.comment.GetCommentDTO
@@ -30,7 +32,7 @@ class PostController(
     }
 
     @ApiRequestMapping("/posts", method = [RequestMethod.GET])
-    fun getPosts(@RequestBody getPostDTO: GetPostDTO, @RequestParam page: Int, @RequestParam size: Int): List<Post> {
+    fun getPosts(@RequestBody getPostDTO: GetPostDTO, @RequestParam page: Int = PAGE, @RequestParam size: Int = SIZE): List<Post> {
         log.debug("getPosts, getPostDTO = '$getPostDTO'")
         val pageRequest = PageRequest.of(page, size)
         return postService.getPosts(getPostDTO, pageRequest)

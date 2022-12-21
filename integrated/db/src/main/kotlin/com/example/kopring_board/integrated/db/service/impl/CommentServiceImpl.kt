@@ -101,33 +101,33 @@ class CommentServiceImpl(
             )
         }
 
-        val optionalReply = commentRepository.findById(updateCommentDTO.id)
-        if (optionalReply.isEmpty) {
+        val optionalComment = commentRepository.findById(updateCommentDTO.id)
+        if (optionalComment.isEmpty) {
             throw ResultCodeException(
                 ResultCode.ERROR_COMMENT_NOT_EXIST,
                 loglevel = Level.ERROR
             )
         }
 
-        if (optionalPost.get().author?.id != optionalUser.get().id) {
+        /*if (optionalPost.get().author?.id != optionalUser.get().id) {
             throw ResultCodeException(ResultCode.ERROR_REQUESTER_NOT_POST_AUTHOR, loglevel = Level.INFO)
-        }
+        }*/
 
-        if (optionalReply.get().author?.id != optionalUser.get().id) {
+        if (optionalComment.get().author?.id != optionalUser.get().id) {
             throw ResultCodeException(
                 ResultCode.ERROR_COMMENT_AUTHOR_NOT_MATCHED_WITH_USER,
                 loglevel = Level.ERROR
             )
         }
 
-        if (optionalReply.get().post?.id != optionalPost.get().id) {
+        if (optionalComment.get().post?.id != optionalPost.get().id) {
             throw ResultCodeException(
                 ResultCode.ERROR_COMMENT_NOT_MATCHED_WITH_POST,
                 loglevel = Level.ERROR
             )
         }
 
-        val reply = optionalReply.get()
+        val reply = optionalComment.get()
         reply.content = updateCommentDTO.content
         commentRepository.save(
             reply
@@ -161,9 +161,9 @@ class CommentServiceImpl(
             )
         }
 
-        if (optionalPost.get().author?.id != optionalUser.get().id) {
+        /*if (optionalPost.get().author?.id != optionalUser.get().id) {
             throw ResultCodeException(ResultCode.ERROR_REQUESTER_NOT_POST_AUTHOR, loglevel = Level.INFO)
-        }
+        }*/
 
         if (optionalReply.get().author?.id != optionalUser.get().id) {
             throw ResultCodeException(
