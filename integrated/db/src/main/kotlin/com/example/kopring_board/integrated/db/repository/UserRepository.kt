@@ -1,15 +1,16 @@
 package com.example.kopring_board.integrated.db.repository
 
 import com.example.kopring_board.integrated.db.entity.User
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
-import java.util.Optional
 
 
 @Repository
 interface UserRepository : JpaRepository<User, String> {
 
-    fun findByIdLikeAndNameLike(id: String, name: String): List<User>
-    fun findByIdLike(id: String): List<User>
-    fun findByNameLike(name: String): List<User>
+    fun findByIdLikeAndNameContains(id: String, name: String, pageable: Pageable): Page<User>
+    fun findByIdContains(id: String, pageable: Pageable): Page<User>
+    fun findByNameContains(name: String, pageable: Pageable): Page<User>
 }
