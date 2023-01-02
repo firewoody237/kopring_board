@@ -99,7 +99,7 @@ class UserServiceImpl(
             }
             else -> {
                 try {
-                    userRepository.save(createUserDTO.toEntity()) //TODO : 이부분 체크 요청
+                    userRepository.save(createUserDTO.toEntity())
                 } catch (e:Exception) {
                     log.error("createUser failed. $createUserDTO", e)
                     throw ResultCodeException(ResultCode.ERROR_DB , loglevel = Level.ERROR)

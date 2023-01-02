@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class HeartServiceImpl(
-    private val userRepository: UserRepository,
-    private val postRepository: PostRepository,
     private val heartRepository: HeartRepository,
     private val postService: PostService,
     private val userService: UserService
@@ -29,20 +27,14 @@ class HeartServiceImpl(
         private val log = LogManager.getLogger()
     }
 
+    //사용자가 본인이 하트 누른 글을 찾아올 때
     override fun getHeartPosts(userId: String): List<Heart> {
         //userID 검증
-        val optionalUser = userRepository.findById(userId)
-        if(optionalUser.isEmpty) {
-            throw ResultCodeException(
-                ResultCode.ERROR_USER_NOT_EXISTS,
-                loglevel = Level.INFO,
-                message = "사용자가 존재하지 않습니다."
-            )
-        }
+        val foundUser = userService.getUser(userId)
 
         //찾기
         return try {
-            heartRepository.findByUser(optionalUser.get())
+            heartRepository.findByUser(foundUser)
         } catch(e:Exception) {
             throw ResultCodeException(
                 ResultCode.ERROR_DB,
@@ -52,20 +44,14 @@ class HeartServiceImpl(
         }
     }
 
+    //해당 글을 하트 누른 유저를 창아올 때
     override fun getHeartUsers(postId: Long): List<Heart> {
-        //userID 검증
-        val optionalPost = postRepository.findById(postId)
-        if(optionalPost.isEmpty) {
-            throw ResultCodeException(
-                ResultCode.ERROR_POST_NOT_EXIST,
-                loglevel = Level.INFO,
-                message = "게시글이 존재하지 않습니다."
-            )
-        }
+
+        val foundPost = postService.getPost(postId)
 
         //찾기
         return try {
-            heartRepository.findByPost(optionalPost.get())
+            heartRepository.findByPost(foundPost)
         } catch(e:Exception) {
             throw ResultCodeException(
                 ResultCode.ERROR_DB,
@@ -75,87 +61,48 @@ class HeartServiceImpl(
         }
     }
 
-    override fun toggleHeart(postId: Long, toggleHeartDTO: ToggleHeartDTO) {
+    override fun heart(postId: Long, toggleHeartDTO: ToggleHeartDTO): Boolean {
 
-        val optionalPost = postRepository.findById(postId)
-        if (optionalPost.isEmpty) {
-            throw ResultCodeException(
-                ResultCode.ERROR_POST_NOT_EXIST,
-                loglevel = Level.ERROR
-            )
+        val foundPost = postService.getPost(postId)
+        val foundUser = userService.getUser(toggleHeartDTO.userId)
+
+        //하트했는지 확인하고, 없으면 heart
+        val optionalHeart = heartRepository.findByUserAndPost(foundUser, foundPost)
+        //TODO : 이거 좀 스마트하게 쓸 수 있는 방법 없을까?
+        if (optionalHeart.isEmpty) {
+            try {
+                heartRepository.save(
+                    Heart(
+                        user = foundUser,
+                        post = foundPost
+                    )
+                )
+                return true
+            } catch(e: Exception) {
+                throw ResultCodeException(ResultCode.ERROR_DB, loglevel = Level.ERROR)
+            }
+        } else {
+            throw ResultCodeException(ResultCode.ERROR_HEART_ALREADY_EXIST, loglevel = Level.WARN)
         }
+    }
 
-        val optionalUser = userRepository.findById(toggleHeartDTO.userId)
-        if (optionalUser.isEmpty) {
-            throw ResultCodeException(
-                ResultCode.ERROR_USER_NOT_EXISTS,
-                loglevel = Level.ERROR
-            )
-        }
+    override fun unheart(postId: Long, toggleHeartDTO: ToggleHeartDTO): Boolean {
 
-//        if (optionalPost.get().author?.id != optionalUser.get().id) {
-//            throw ResultCodeException(
-//                ResultCode.ERROR_REQUESTER_NOT_POST_AUTHOR,
-//                loglevel = Level.ERROR
-//            )
-//        }
+        val foundPost = postService.getPost(postId)
+        val foundUser = userService.getUser(toggleHeartDTO.userId)
 
-        val optionalHeart = heartRepository.findByUserAndPost(optionalUser.get(), optionalPost.get())
+        //하트했는지 확인하고, 없으면 heart
+        //TODO : 이거 좀 스마트하게 쓸 수 있는 방법 없을까?
+        val optionalHeart = heartRepository.findByUserAndPost(foundUser, foundPost)
         if (optionalHeart.isPresent) {
-            heartRepository.deleteById(optionalHeart.get().id)
+            try {
+                heartRepository.deleteById(optionalHeart.get().id)
+                return true
+            } catch (e: Exception) {
+                throw ResultCodeException(ResultCode.ERROR_DB, loglevel = Level.ERROR)
+            }
         } else {
-            heartRepository.save(
-                Heart(
-                    user = optionalUser.get(),
-                    post = optionalPost.get()
-                )
-            )
+            throw ResultCodeException(ResultCode.ERROR_HEART_NOT_EXIST, loglevel = Level.WARN)
         }
     }
-    /*fun like(postId: Long, toggleHeartDTO: ToggleHeartDTO) {
-        val post = postService.getPost(postId)
-
-        val user = userService.getUser(toggleHeartDTO.userId)
-
-        try{
-            heartRepository.save(
-                Heart(
-                    user = user,
-                    post = post
-                )
-            )
-        }catch (e:Exception){
-            throw ResultCodeException(
-                ResultCode.ERROR_DB,
-                loglevel = Level.ERROR
-            )
-        }
-
-
-        val optionalHeart = heartRepository.findByUserAndPost(optionalUser.get(), optionalPost.get())
-        if (optionalHeart.isPresent) {  heartRepository.deleteById(optionalHeart.get().id)
-
-        } else {
-            heartRepository.save(
-                Heart(
-                    user = optionalUser.get(),
-                    post = optionalPost.get()
-                )
-            )
-        }
-    }
-
-
-    fun dislike(heartId : String) {
-        try{
-            heartRepository.deleteById(optionalHeart.get().id)
-        }catch (e:Exception){
-            throw ResultCodeException(
-                ResultCode.ERROR_DB,
-                loglevel = Level.ERROR
-            )
-        }
-    }*/
-
-
 }

@@ -30,6 +30,11 @@ enum class ResultCode(val code: Int, val msg: String) {
     ERROR_COMMENT_NOT_MATCHED_WITH_POST(4002, "댓글과 게시글이 매칭되지 않습니다."),
     ERROR_COMMENT_NOT_EXIST(4003, "존재하지 않는 댓글입니다."),
     ERROR_COMMENT_ALREADY_EXIST(4004, "이미 존재하는 댓글입니다."),
+    ERROR_NO_DIFFERENCE(4005, "변경할 내용이 없습니다."),
+
+    //5000 : 하트 관련
+    ERROR_HEART_ALREADY_EXIST(5001, "하트 이력이 이미 존재합니다."),
+    ERROR_HEART_NOT_EXIST(5002, "하트 이력이 존재하지 않습니다."),
 
     //9000 : 확인이 힘든 오류
     ERROR_DB(9002, "DB 변경 중 오류"),

@@ -23,7 +23,6 @@ import java.time.LocalDateTime
 class PostServiceImpl(
     private val postMapper: PostMapper,
     private val postRepository: PostRepository,
-    private val userRepository: UserRepository,
     private val userService: UserService
 ): PostService {
 
@@ -44,9 +43,8 @@ class PostServiceImpl(
             return postRepository.findByCategoryAndDeletedAtIsNotNull(Category.valueOf(getPostDTO.category), pageRequest)
         }
 
-        //한번에 모든 Post를 조회할 일이 거의 없음
-        //저자와 카테고리로 조회(delete 되지 않은 것)
         return when {
+            //저자(+카테고리)만 존재
             getPostDTO.title.isNullOrEmpty() && getPostDTO.content.isNullOrEmpty() -> {
                 postRepository.findByAuthorAndCategoryAndDeletedAtIsNotNull(
                     User(
@@ -57,6 +55,7 @@ class PostServiceImpl(
                 )
             }
 
+            //제목(+카테고리)만 존재
             getPostDTO.authorId.isNullOrEmpty() && getPostDTO.content.isNullOrEmpty() -> {
                 postRepository.findByTitleLikeAndCategoryAndDeletedAtIsNotNull(
                     getPostDTO.title!!,
@@ -65,6 +64,7 @@ class PostServiceImpl(
                 )
             }
 
+            //내용(+카테고리)만 존재
             getPostDTO.authorId.isNullOrEmpty() && getPostDTO.title.isNullOrEmpty() -> {
                 postRepository.findByContentLikeAndCategoryAndDeletedAtIsNotNull(
                     getPostDTO.content!!,
@@ -82,67 +82,10 @@ class PostServiceImpl(
         }
     }
 
-//    fun getPostsByAuthorAndCategory(getPostDTO: GetPostDTO): List<Post> {
-//        return getPostsByAuthorAndCategory(getPostDTO.authorId!!, getPostDTO.category!!)
-//    }
-
-//    fun getPostsByAuthorAndCategory(authorId: String, category: String): List<Post> {
-//        val posts =
-//            postRepository.findByAuthorAndCategoryAndDeletedAtIsNotNull(
-//                User(
-//                    id = authorId
-//                ), Category.valueOf(category)
-//            )
-//        if (posts.isEmpty()) {
-//            throw ResultCodeException(ResultCode.ERROR_POST_NOT_EXIST, loglevel = Level.INFO)
-//        } else {
-//            return posts
-//        }
-//    }
-
-
-//    fun getPostsByUser(user: User): List<Post> {
-//        return getPostsByUser(user.id)
-//    }
-
-//    fun getPostsByUser(authorId: String): List<Post> {
-//        try {
-//            return postRepository.findByAuthorAndDeletedAtIsNotNull(
-//                User(
-//                    id = authorId
-//                )
-//            )
-//        } catch (e: Exception) {
-//            throw ResultCodeException(ResultCode.ERROR_DB, loglevel = Level.WARN)
-//        }
-//    }
-
-
-//    fun getPostsByCateogry(category: String): List<Post> {
-//        try {
-//            return getPostsByCateogry(Category.valueOf(category))
-//        } catch (e: Exception) {
-//            throw ResultCodeException(ResultCode.ERROR_ETC, loglevel = Level.INFO)
-//        }
-//    }
-
-//    fun getPostsByCateogry(category: Category): List<Post> {
-//        val posts =
-//            postRepository.findByCategoryAndDeletedAtIsNotNull(
-//                category
-//            )
-//        if (posts.isEmpty()) {
-//            throw ResultCodeException(ResultCode.ERROR_POST_NOT_EXIST, loglevel = Level.INFO)
-//        } else {
-//            return posts
-//        }
-//    }
-
-
     override fun getPost(id: Long): Post {
         log.debug("getPost, id = '$id'")
 
-        val post = postRepository.findById(id)
+        val post = postRepository.findById(id) //TODO: IsNotNull 추가
         if (post.isPresent) {
             return post.get()
         } else {
@@ -154,14 +97,8 @@ class PostServiceImpl(
         log.debug("createPost, createPostDTO='$createPostDTO'")
 
         val author = userService.getUser(createPostDTO.authorId)
-//
-//        val optionalUser = userRepository.findById(createPostDTO.authorId)
-//        if (optionalUser.isEmpty) {
-//            throw ResultCodeException(ResultCode.ERROR_USER_NOT_EXISTS, loglevel = Level.WARN)
-//        }
 
         when {
-            //TODO: Entity에 nullable로 안해두면 이게 필요할까?
             createPostDTO.title.isNullOrEmpty() -> {
                 throw ResultCodeException(
                     ResultCode.ERROR_PARAMETER_NOT_EXISTS,
@@ -187,12 +124,10 @@ class PostServiceImpl(
             }
         }
 
-//        val author = optionalUser.get()
-
         val post = Post(
             title = createPostDTO.title!!,
             content = createPostDTO.content!!,
-            category = Category.valueOf(createPostDTO.category!!),
+            category = Category.valueOf(createPostDTO.category),
             author = author
         )
 
@@ -208,44 +143,33 @@ class PostServiceImpl(
 
     override fun updatePost(updatePostDTO: UpdatePostDTO): Boolean {
         log.debug("updatePost, updatePostDTO='$updatePostDTO'")
-//        val authorID = modifiedPost.authorId
-//        val postID = modifiedPost.postId
 
         //Post Check
-        val optionalPost = postRepository.findById(updatePostDTO.id)
-        if (optionalPost.isEmpty) {
-            throw ResultCodeException(ResultCode.ERROR_POST_NOT_EXIST, loglevel = Level.WARN)
-        }
+        val foundPost = getPost(updatePostDTO.id)
 
         //User Check
-        val optionalUser = userRepository.findById(updatePostDTO.authorId)
-        if (optionalUser.isEmpty) {
-            throw ResultCodeException(ResultCode.ERROR_POST_NOT_EXIST, loglevel = Level.WARN)
-        }
-
-        //todo call user service
+        val foundUser = userService.getUser(updatePostDTO.authorId)
 
         //Author Check
-        if (optionalPost.get().author?.id != optionalUser.get().id) {
+        if (foundPost.author != foundUser) {
             throw ResultCodeException(ResultCode.ERROR_REQUESTER_NOT_POST_AUTHOR, loglevel = Level.WARN)
         }
 
         var isChange = false
-        val post = optionalPost.get()
 
         if (updatePostDTO.title?.isNotEmpty() == true) {
-            post.title = updatePostDTO.title!!
+            foundPost.title = updatePostDTO.title!!
             isChange = true
         }
 
-        if (!updatePostDTO.content.isNullOrEmpty()) {
-            post.content = updatePostDTO.content!!
+        if (updatePostDTO.content?.isNotEmpty() == true) {
+            foundPost.content = updatePostDTO.content!!
             isChange = true
         }
 
-        if (!updatePostDTO.category.isNullOrEmpty()) {
+        if (updatePostDTO.category?.isNotEmpty() == true) {
             val category = Category.valueOf(updatePostDTO.category!!)
-            post.category = category
+            foundPost.category = category
             isChange = true
         }
 
@@ -253,7 +177,7 @@ class PostServiceImpl(
         return try {
             when(isChange) {
                 true -> {
-                    postRepository.save(post)
+                    postRepository.save(foundPost)
                     true
                 }
 
@@ -269,27 +193,21 @@ class PostServiceImpl(
     override fun deletePost(deletePostDTO: DeletePostDTO): Boolean {
         log.debug("deletePost deletePostDTO='$deletePostDTO'")
 
-        //find by id
-        val optionalUser = userRepository.findById(deletePostDTO.authorId)
-        //empty check return;
-        if (optionalUser.isEmpty) {
-            throw ResultCodeException(ResultCode.ERROR_USER_NOT_EXISTS, loglevel = Level.WARN)
+        if (deletePostDTO.id == null || deletePostDTO.authorId == null) {
+            throw ResultCodeException(ResultCode.ERROR_PARAMETER_NOT_EXISTS, loglevel = Level.WARN,
+            "게시글ID나 사용자ID를 모두 입력 해 주세요")
         }
 
-        val optionalPost = postRepository.findById(deletePostDTO.id)
-        if (optionalPost.isEmpty) {
-            throw ResultCodeException(ResultCode.ERROR_POST_NOT_EXIST, loglevel = Level.WARN)
-        }
+        val foundUser = userService.getUser(deletePostDTO.authorId)
+        val foundPost = getPost(deletePostDTO.id)
 
-        val post = optionalPost.get()
-        //author id check return;
-        if (optionalUser.get().id != post.author?.id) {
+        if (foundPost.author != foundUser) {
             throw ResultCodeException(ResultCode.ERROR_REQUESTER_NOT_POST_AUTHOR, loglevel = Level.WARN)
         }
 
-        post.deletedAt = LocalDateTime.now()
+        foundPost.deletedAt = LocalDateTime.now()
         return try {
-            postRepository.save(post)
+            postRepository.save(foundPost)
             true
         } catch (e: Exception) {
             throw ResultCodeException(ResultCode.ERROR_DB, loglevel = Level.ERROR)

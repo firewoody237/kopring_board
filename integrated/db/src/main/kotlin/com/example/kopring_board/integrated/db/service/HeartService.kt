@@ -8,5 +8,6 @@ import com.example.kopring_board.integrated.db.entity.User
 interface HeartService {
     fun getHeartPosts(userId: String): List<Heart>
     fun getHeartUsers(postId: Long): List<Heart>
-    fun toggleHeart(postId: Long, toggleHeartDTO: ToggleHeartDTO)
+    fun heart(postId: Long, toggleHeartDTO: ToggleHeartDTO): Boolean
+    fun unheart(postId: Long, toggleHeartDTO: ToggleHeartDTO): Boolean
 }

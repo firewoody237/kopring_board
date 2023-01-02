@@ -72,9 +72,15 @@ class PostController(
     }
 
     @ApiRequestMapping("/posts/{id}/hearts", method = [RequestMethod.PUT])
-    fun toggleHeart(@PathVariable id: Long, @RequestBody toggleHeartDTO: ToggleHeartDTO) {
-        log.debug("getHeartUsers, id='$id'")
-        return heartService.toggleHeart(id, toggleHeartDTO)
+    fun heart(@PathVariable id: Long, @RequestBody toggleHeartDTO: ToggleHeartDTO): Boolean {
+        log.debug("heart, id='$id'")
+        return heartService.heart(id, toggleHeartDTO)
+    }
+
+    @ApiRequestMapping("/posts/{id}/heart", method = [RequestMethod.DELETE])
+    fun unheart(@PathVariable id: Long, @RequestBody toggleHeartDTO: ToggleHeartDTO): Boolean {
+        log.debug("unheart, id='$id'")
+        return heartService.unheart(id, toggleHeartDTO)
     }
 
     @ApiRequestMapping("/posts/{id}/comments", method = [RequestMethod.GET])
