@@ -6,5 +6,5 @@ data class CreatePostDTO(
     var authorId: String,
     var title: String?,
     var content: String?,
-    var category: String = Category.UNCATEGORIZED.toString()
+    var category: String? = Category.UNCATEGORIZED.toString()
 )

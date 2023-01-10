@@ -45,13 +45,13 @@ class HeartServiceImpl(
     }
 
     //해당 글을 하트 누른 유저를 창아올 때
-    override fun getHeartUsers(postId: Long): List<Heart> {
+    override fun getHeartUsers(postId: Long): MutableList<Heart>? {
 
         val foundPost = postService.getPost(postId)
 
         //찾기
         return try {
-            heartRepository.findByPost(foundPost)
+            foundPost.heartList
         } catch(e:Exception) {
             throw ResultCodeException(
                 ResultCode.ERROR_DB,
@@ -67,9 +67,10 @@ class HeartServiceImpl(
         val foundUser = userService.getUser(toggleHeartDTO.userId)
 
         //하트했는지 확인하고, 없으면 heart
-        val optionalHeart = heartRepository.findByUserAndPost(foundUser, foundPost)
-        //TODO : 이거 좀 스마트하게 쓸 수 있는 방법 없을까?
-        if (optionalHeart.isEmpty) {
+        val foundHeart = heartRepository.findByUserAndPost(foundUser, foundPost)
+        log.debug("foundHeart = {}", foundHeart)
+
+        if (foundHeart == null) {
             try {
                 heartRepository.save(
                     Heart(
@@ -92,11 +93,11 @@ class HeartServiceImpl(
         val foundUser = userService.getUser(toggleHeartDTO.userId)
 
         //하트했는지 확인하고, 없으면 heart
-        //TODO : 이거 좀 스마트하게 쓸 수 있는 방법 없을까?
-        val optionalHeart = heartRepository.findByUserAndPost(foundUser, foundPost)
-        if (optionalHeart.isPresent) {
+        val foundHeart = heartRepository.findByUserAndPost(foundUser, foundPost)
+
+        if (foundHeart != null) {
             try {
-                heartRepository.deleteById(optionalHeart.get().id)
+                heartRepository.deleteById(foundHeart.id)
                 return true
             } catch (e: Exception) {
                 throw ResultCodeException(ResultCode.ERROR_DB, loglevel = Level.ERROR)

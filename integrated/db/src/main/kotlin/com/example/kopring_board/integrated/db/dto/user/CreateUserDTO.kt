@@ -8,7 +8,6 @@ data class CreateUserDTO(
     var name: String?,
     var email: String?,
     var password: String?,
-    var authority: String = Authority.NORMAL.toString(),
 ) {
     fun toEntity(): User {
         val aUser = User(

@@ -2,6 +2,7 @@ package com.example.kopring_board.integrated.db.entity
 
 import com.example.kopring_board.integrated.common.BaseTime
 import com.example.kopring_board.integrated.common.PasswordConverter
+import com.example.kopring_board.integrated.user.Authority
 import com.example.kopring_board.integrated.user.Grade
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.CreatedDate
@@ -25,6 +26,8 @@ data class User(
     var grade: Grade = Grade.GREEN,
     @Column
     var point: Long = 0,
+    @Column
+    var authority: Authority = Authority.NORMAL
 ): BaseTime(), java.io.Serializable {
 
 //    @JsonIgnore
@@ -48,6 +51,6 @@ var password: String? = null
     }
 
     override fun toString(): String {
-        return "User(id=$id, name='$name', email='$email', grade='$grade', point='$point', createdAt='$createdAt', modifiedAt='$modifiedAt')"
+        return "User(id=$id, name='$name', email='$email', grade='$grade', point='$point', authority='$authority', createdAt='$createdAt', modifiedAt='$modifiedAt')"
     }
 }

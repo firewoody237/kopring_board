@@ -1,5 +1,9 @@
 package com.example.kopring_board.admin.controller.userAdminController
 
+import com.example.kopring_board.admin.dto.AdminLogDTO
+import com.example.kopring_board.admin.dto.AdminUserDeleteDTO
+import com.example.kopring_board.admin.dto.AdminUserUpdateDTO
+import com.example.kopring_board.admin.service.UserAdminService
 import com.example.kopring_board.integrated.common.ResultCode
 import com.example.kopring_board.integrated.common.ResultCodeException
 import com.example.kopring_board.integrated.db.dto.user.CreateUserDTO
@@ -20,59 +24,48 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/admin/user/v1")
 class UserAdminController(
-    private val userService: UserService,
+    private val userAdminService: UserAdminService,
+    private val userService: UserService
 ) {
 
-    //TODO: 아직은 딱히 어드민일 때만 할 만한게 떠오르지 않는다
     companion object {
         private val log = LogManager.getLogger()
     }
 
-    //TODO: 조회 따로 만들어야 하나?
-
-    @ApiRequestMapping("/users/{id}", method = [RequestMethod.POST])
-    fun createUser(@RequestBody createUserDTO: CreateUserDTO): User {
-        log.debug("call admin createUser: createUserDTO = '$createUserDTO")
-        return when (createUserDTO.authority) {
-
-            Authority.NORMAL.toString() -> {
-                userService.createUser(createUserDTO)
-            }
-
-            //TODO: 이거 컨트롤러에서 검증해도 되나..?
-            else -> {
-                throw ResultCodeException(ResultCode.ERROR_USER_NOT_ADMIN, loglevel = Level.WARN)
-            }
-        }
-    }
-
+    //who
     @ApiRequestMapping("/users", method = [RequestMethod.PUT])
-    fun updateUser(@RequestBody updateUserDTO: UpdateUserDTO): Boolean {
-        log.debug("call admin updateUser : updateUserDTO = '$updateUserDTO")
+    fun updateUser(@RequestBody adminUserUpdateDTO: AdminUserUpdateDTO): Boolean {
+        log.debug("call admin updateUser : adminUserUpdateDTO = '$adminUserUpdateDTO")
 
-        return when (updateUserDTO.authority) {
-            Authority.ADMIN.toString() -> {
-                userService.updateUser(updateUserDTO)
-            }
-
-            else -> {
-                throw ResultCodeException(ResultCode.ERROR_USER_NOT_ADMIN, loglevel = Level.WARN)
-            }
+        val foundUser = userService.getUser(adminUserUpdateDTO.id)
+        if (foundUser.authority != Authority.ADMIN) {
+            throw ResultCodeException(ResultCode.ERROR_USER_NOT_ADMIN, loglevel = Level.WARN)
         }
+
+        return userAdminService.updateUser(
+            AdminLogDTO(
+                userId = adminUserUpdateDTO.id,
+                log = "Admin - User Update"
+            ),
+            adminUserUpdateDTO
+        )
     }
 
     @ApiRequestMapping("/users", method = [RequestMethod.DELETE])
-    fun deleteUser(@RequestBody deleteUserDTO: DeleteUserDTO): Boolean {
-        log.debug("call admin deleteUser : deleteUserDTO = '$deleteUserDTO")
+    fun deleteUser(@RequestBody adminUserDeleteDTO: AdminUserDeleteDTO): Boolean {
+        log.debug("call admin deleteUser : adminUserDeleteDTO = '$adminUserDeleteDTO")
 
-        return when (deleteUserDTO.authority) {
-            Authority.ADMIN.toString() -> {
-                userService.deleteUser(deleteUserDTO)
-            }
-
-            else -> {
-                throw ResultCodeException(ResultCode.ERROR_USER_NOT_ADMIN, loglevel = Level.WARN)
-            }
+        val foundUser = userService.getUser(adminUserDeleteDTO.id)
+        if (foundUser.authority != Authority.ADMIN) {
+            throw ResultCodeException(ResultCode.ERROR_USER_NOT_ADMIN, loglevel = Level.WARN)
         }
+
+        return userAdminService.deleteUser(
+            AdminLogDTO(
+                userId = adminUserDeleteDTO.id,
+                log = "Admin - User Delete"
+            ),
+            adminUserDeleteDTO
+        )
     }
 }

@@ -9,6 +9,4 @@ import java.util.*
 
 @Repository
 interface CommentRepository : JpaRepository<Comment, Long?> {
-    fun findByAuthorAndPostAndContentAndDeletedAtIsNotNull(author: User?, post: Post?, content: String): Optional<Comment>
-    fun findByPostAndDeletedAtIsNotNull(post: Post?): List<Comment>
 }

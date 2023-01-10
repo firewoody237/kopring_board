@@ -19,6 +19,7 @@ import com.example.kopring_board.integrated.webservice.api.ApiRequestMapping
 import org.apache.logging.log4j.LogManager
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*
+import kotlin.contracts.contract
 
 @RestController
 @RequestMapping("/post/v1")
@@ -32,23 +33,64 @@ class PostController(
     }
 
     @ApiRequestMapping("/posts", method = [RequestMethod.GET])
-    fun getPosts(@RequestBody getPostDTO: GetPostDTO, @RequestParam page: Int = PAGE, @RequestParam size: Int = SIZE): List<Post> {
+    fun getPosts(
+        @RequestBody getPostDTO: GetPostDTO,
+        @RequestParam page: Int = PAGE,
+        @RequestParam size: Int = SIZE
+    ): List<PostVO> {
         log.debug("getPosts, getPostDTO = '$getPostDTO'")
         val pageRequest = PageRequest.of(page, size)
-        return postService.getPosts(getPostDTO, pageRequest)
+        return postService.getPosts(getPostDTO, pageRequest).map {
+            post -> PostVO(
+                id = post.id,
+                authorId = post.author!!.id,
+                title = post.title,
+                content =  post.content,
+                comment = post.commentList.map {
+                    mapOf(
+                        "content" to it.content
+                    )
+                }.toList(),
+                commentCount = post.commentList.size.toLong()
+            )
+        }
     }
 
     @ApiRequestMapping("/posts/{id}", method = [RequestMethod.GET])
-    fun getPosts(@PathVariable id: Long): Post {
+    fun getPosts(@PathVariable id: Long): Any? {
         log.debug("getPost, id = '$id'")
 
-        return postService.getPost(id)
+        val post = postService.getPost(id)
+        return PostVO(
+            id = post.id,
+            authorId = post.author!!.id,
+            title = post.title,
+            content =  post.content,
+            comment = post.commentList.map {
+                mapOf(
+                    "content" to it.content
+                )
+            }.toList(),
+            commentCount = post.commentList.size.toLong()
+        )
     }
 
     @ApiRequestMapping("/posts", method = [RequestMethod.POST])
-    fun createPost(@RequestBody createPostDTO: CreatePostDTO): Post {
+    fun createPost(@RequestBody createPostDTO: CreatePostDTO): Any? {
         log.debug("createPost. createPostDTO = '$createPostDTO'")
-        return postService.createPost(createPostDTO)
+        val post = postService.createPost(createPostDTO)
+        return PostVO(
+            id = post.id,
+            authorId = post.author!!.id,
+            title = post.title,
+            content = post.content,
+            comment = post.commentList.map {
+                mapOf(
+                    "content" to it.content
+                )
+            }.toList(),
+            commentCount = post.commentList.size.toLong()
+        )
     }
 
     @ApiRequestMapping("/posts", method = [RequestMethod.PATCH, RequestMethod.PUT])
@@ -66,12 +108,12 @@ class PostController(
 
     //TODO: 이 설계가 맞을까..?
     @ApiRequestMapping("/posts/{id}/hearts", method = [RequestMethod.GET])
-    fun getHeartUsers(@PathVariable id: Long): List<Heart> {
+    fun getHeartUsers(@PathVariable id: Long): MutableList<Heart>? {
         log.debug("getHeartUsers, id='$id'")
         return heartService.getHeartUsers(id)
     }
 
-    @ApiRequestMapping("/posts/{id}/hearts", method = [RequestMethod.PUT])
+    @ApiRequestMapping("/posts/{id}/hearts", method = [RequestMethod.POST])
     fun heart(@PathVariable id: Long, @RequestBody toggleHeartDTO: ToggleHeartDTO): Boolean {
         log.debug("heart, id='$id'")
         return heartService.heart(id, toggleHeartDTO)

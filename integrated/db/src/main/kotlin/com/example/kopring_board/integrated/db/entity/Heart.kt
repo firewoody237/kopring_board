@@ -37,6 +37,6 @@ data class Heart (
     }
 
     override fun toString(): String {
-        return "Heart(id=$id, user='$user', post='$post', createdAt='$createdAt', modifiedAt='$modifiedAt')"
+        return "Heart(id=$id, user='$user', createdAt='$createdAt', modifiedAt='$modifiedAt')"
     }
 }

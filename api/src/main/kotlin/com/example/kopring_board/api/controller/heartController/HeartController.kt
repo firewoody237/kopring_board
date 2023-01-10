@@ -22,7 +22,7 @@ class HeartController(
 
     @ApiRequestMapping("/users/{id}/heart", method = [RequestMethod.GET])
     fun getHeartPosts(@PathVariable id: String): List<Heart> {
-        UserController.log.debug("getUserHeart, userId='$id'")
+        log.debug("getUserHeart, userId='$id'")
         return heartService.getHeartPosts(id)
     }
 }

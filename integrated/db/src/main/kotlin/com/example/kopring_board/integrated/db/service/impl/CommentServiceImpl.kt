@@ -31,11 +31,9 @@ class CommentServiceImpl(
         val foundPost = postService.getPost(postId)
 
         try {
-            return commentRepository.findByPostAndDeletedAtIsNotNull(
-                Post(
-                    id = postId
-                )
-            )
+            return foundPost.commentList.filter {
+                comment -> comment.deletedAt == null
+            }
         } catch(e: Exception) {
             throw ResultCodeException(ResultCode.ERROR_DB, loglevel = Level.ERROR)
         }
@@ -56,8 +54,8 @@ class CommentServiceImpl(
         return commentRepository.save(
             Comment(
                 content = createCommentDTO.content,
-                post = foundPost,
-                author = foundUser
+                author = foundUser,
+                post = foundPost
             )
         )
     }
@@ -87,12 +85,12 @@ class CommentServiceImpl(
             )
         }
 
-        if (optionalComment.get().post?.id != foundPost.id) {
+        /*if (optionalComment.get().post?.id != foundPost.id) {
             throw ResultCodeException(
                 ResultCode.ERROR_COMMENT_NOT_MATCHED_WITH_POST,
                 loglevel = Level.ERROR
             )
-        }
+        }*/
 
         val comment = optionalComment.get()
         if (comment.content != updateCommentDTO.content) {
@@ -121,7 +119,7 @@ class CommentServiceImpl(
         val optionalComment = commentRepository.findById(deleteCommentDTO.id)
         if (optionalComment.isEmpty) {
             throw ResultCodeException(
-                ResultCode.ERROR_COMMENT_NOT_EXIST,
+                resultCode = ResultCode.ERROR_COMMENT_NOT_EXIST,
                 loglevel = Level.ERROR
             )
         }
@@ -133,12 +131,12 @@ class CommentServiceImpl(
             )
         }
 
-        if (optionalComment.get().post?.id != foundPost.id) {
+        /*if (optionalComment.get().post?.id != foundPost.id) {
             throw ResultCodeException(
                 ResultCode.ERROR_COMMENT_NOT_MATCHED_WITH_POST,
                 loglevel = Level.ERROR
             )
-        }
+        }*/
 
         val comment = optionalComment.get()
         try {

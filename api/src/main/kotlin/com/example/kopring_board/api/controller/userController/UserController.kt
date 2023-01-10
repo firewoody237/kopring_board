@@ -23,21 +23,43 @@ class UserController(
     }
 
     @ApiRequestMapping("/users", method = [RequestMethod.GET])
-    fun getUsers(@RequestBody getUserDTO: GetUserDTO, @RequestBody pageDTO: PageDTO): Page<User> {
+    fun getUsers(@RequestBody getUserDTO: GetUserDTO, @RequestBody pageDTO: PageDTO): Page<UserVO> {
         log.debug("call getUsers : getUserDTO = '$getUserDTO', pageDTO = '$pageDTO'")
-        return userService.getUsers(getUserDTO, pageDTO)
+        return userService.getUsers(getUserDTO, pageDTO).map {
+            user -> UserVO(
+                id = user.id,
+                name = user.name!!,
+                email = user.email!!,
+                grade = user.grade.toString(),
+                point = user.point
+            )
+        }
     }
 
     @ApiRequestMapping("/users/{id}", method = [RequestMethod.GET])
-    fun getUser(@PathVariable id: String): User {
+    fun getUser(@PathVariable id: String): Any? {
         log.debug("call getUser : id = '$id'")
-        return userService.getUser(id)
+        val user = userService.getUser(id)
+        return UserVO(
+            id = user.id,
+            name = user.name!!,
+            email = user.email!!,
+            grade = user.grade.toString(),
+            point = user.point
+        )
     }
 
     @ApiRequestMapping("/users", method = [RequestMethod.POST])
-    fun createUser(@RequestBody createUserDTO: CreateUserDTO): User {
+    fun createUser(@RequestBody createUserDTO: CreateUserDTO): Any? {
         log.debug("call createUser : createUserDTO = '$createUserDTO'")
-        return userService.createUser(createUserDTO)
+        val user = userService.createUser(createUserDTO)
+        return UserVO(
+            id = user.id,
+            name = user.name!!,
+            email = user.email!!,
+            grade = user.grade.toString(),
+            point = user.point
+        )
     }
 
     //TODO: Password 변경 추가

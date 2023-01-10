@@ -22,7 +22,7 @@ class UserServiceImpl(
     private val userMapper: UserMapper,
     private val userRepository: UserRepository
 ): UserService {
-    //TODO: 하기 메소드들을 좀 더 코틀린스럽게 할 수 없을까
+
     companion object {
         private val log = LogManager.getLogger()
     }

@@ -85,8 +85,8 @@ class PostServiceImpl(
     override fun getPost(id: Long): Post {
         log.debug("getPost, id = '$id'")
 
-        val post = postRepository.findById(id) //TODO: IsNotNull 추가
-        if (post.isPresent) {
+        val post = postRepository.findById(id)//TODO: IsNotNull 추가
+        if (post.isPresent && post.get().deletedAt == null) {
             return post.get()
         } else {
             throw ResultCodeException(ResultCode.ERROR_POST_NOT_EXIST, loglevel = Level.INFO)
@@ -127,7 +127,7 @@ class PostServiceImpl(
         val post = Post(
             title = createPostDTO.title!!,
             content = createPostDTO.content!!,
-            category = Category.valueOf(createPostDTO.category),
+            category = Category.valueOf(createPostDTO.category!!),
             author = author
         )
 

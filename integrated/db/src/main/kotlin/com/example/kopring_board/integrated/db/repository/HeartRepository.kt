@@ -10,6 +10,5 @@ import java.util.Optional
 @Repository
 interface HeartRepository: JpaRepository<Heart, Long?> {
     fun findByUser(user: User): List<Heart>
-    fun findByPost(post: Post): List<Heart>
-    fun findByUserAndPost(user: User, post: Post): Optional<Heart>
+    fun findByUserAndPost(user: User, post: Post): Heart?
 }

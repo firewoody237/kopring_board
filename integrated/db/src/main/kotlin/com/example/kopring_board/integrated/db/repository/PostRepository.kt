@@ -18,4 +18,5 @@ interface PostRepository : JpaRepository<Post, Long?> {
     fun findByAuthorAndCategoryAndDeletedAtIsNotNull(author: User, category: Category, pageRequest: PageRequest): List<Post>
     fun findByTitleLikeAndCategoryAndDeletedAtIsNotNull(title: String, category: Category, pageRequest: PageRequest) : List<Post>
     fun findByContentLikeAndCategoryAndDeletedAtIsNotNull(title: String, category: Category, pageRequest: PageRequest) : List<Post>
+    fun findAllByAuthorAndDeletedAtIsNotNull(author: User)
 }

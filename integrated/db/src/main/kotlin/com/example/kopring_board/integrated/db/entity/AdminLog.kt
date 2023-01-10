@@ -2,35 +2,31 @@ package com.example.kopring_board.integrated.db.entity
 
 import com.example.kopring_board.integrated.common.BaseTime
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.time.LocalDateTime
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.EntityListeners
+import javax.persistence.GeneratedValue
+import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity
 @EntityListeners(value = [AuditingEntityListener::class])
-@Table(name = "comment")
-data class Comment(
+@Table(name = "admin_log")
+data class AdminLog(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     val id: Long = 0L,
-    @Column(nullable = false, length = 200)
-    var content: String = "",
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    val author: User? = null,
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "post_id")
-    val post: Post? = null,
-
     @Column
-    var deletedAt: LocalDateTime? = null,
+    val userId: String = "",
+    @Column
+    val log: String = "",
 ): BaseTime() {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Comment
+        other as AdminLog
 
         if (id != other.id) return false
 
@@ -42,6 +38,6 @@ data class Comment(
     }
 
     override fun toString(): String {
-        return "Comment(id='$id', content='$content', author='$author', deletedAt='$deletedAt'"
+        return "Comment(id='$id', userId='$userId', log='$log'"
     }
 }
